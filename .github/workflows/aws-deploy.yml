@@ -42,7 +42,7 @@ jobs:
 
       # Step 4: Format check
       - name: Terraform Format Check
-        run: terraform fmt -check
+        run: terraform fmt -check -diff
 
       # Step 5: Initialize the workspace (uses OIDC credentials to access the S3 backend)
       - name: Terraform Init
