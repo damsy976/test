@@ -3,7 +3,7 @@ on:
   push:
     branches: [ main ]
 
-# Permissions needed to request the OIDC JWT token
+# Permissions needed to request the OIDC JWTtoken
 permissions:
   id-token: write
   contents: read
