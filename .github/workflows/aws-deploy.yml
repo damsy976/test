@@ -1,0 +1,25 @@
+name: Deploy to AWS
+on:
+  push:
+    branches: [ main ]
+
+# Permissions needed to request the OIDC JWT token
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::YOUR_ACCOUNT_ID:role/GitHubActionsWorkflowRole
+          aws-region: us-east-1
+
+      - name: Test Connection
+        run: aws sts get-caller-identity
