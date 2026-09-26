@@ -1,34 +1,62 @@
-name: Deploy to AWS
+name: Deploy Terraform Infrastructure
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-# Permissions needed to request the OIDC JWTtoken
+concurrency:
+  group: terraform-deploy
+  cancel-in-progress: false
+
 permissions:
-  id-token: write
-  contents: read
+  id-token: write   # Required for requesting the JWT token from GitHub OIDC
+  contents: read    # Required for actions/checkout
 
 jobs:
-  Deploy:
+  terraform:
+    name: "Terraform Action"
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
+      # Step 1: Clone the GitHub repository code onto the runner
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Check git oidc
-        run: |
-         echo "Repository: $GITHUB_REPOSITORY"
-         echo "Ref: $GITHUB_REF"
-         echo "Event: $GITHUB_EVENT_NAME"
-         echo "Repository ID: $GITHUB_RPOSITORY_ID"
-         echo "Owner ID": $GITHUB_REPOSITORY_OWNER_ID"
-         echo "Workflow: $GITHUB_WORKFLOW
-
+      # Step 2: Authenticate with AWS via OIDC
+      # Replace the role ARN with your exact AWS IAM Role ARN configured for OIDC
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::560396668922:role/GitHubActionsWorkflowRole
-          aws-region: us-east-1
+          aws-region: ap-south-2
 
-      - name: Test Connection
-        run: aws sts get-caller-identity
+      # Step 3: Set up the Terraform CLI tool on the runner
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+
+      # Step 4: Format check
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      # Step 5: Initialize the workspace (uses OIDC credentials to access the S3 backend)
+      - name: Terraform Init
+        run: terraform init
+
+      # Step 6: Validate the syntax
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Step 7: Generate an execution plan
+      - name: Terraform Plan
+        run: terraform plan -input=false
+
+      # Step 8: Apply changes automatically on main branch push
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false

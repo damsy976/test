@@ -1,0 +1,34 @@
+name: Deploy to AWS
+on:
+  push:
+    branches: [ main ]
+
+# Permissions needed to request the OIDC JWTtoken
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check git oidc
+        run: |
+         echo "Repository: $GITHUB_REPOSITORY"
+         echo "Ref: $GITHUB_REF"
+         echo "Event: $GITHUB_EVENT_NAME"
+         echo "Repository ID: $GITHUB_RPOSITORY_ID"
+         echo "Owner ID": $GITHUB_REPOSITORY_OWNER_ID"
+         echo "Workflow: $GITHUB_WORKFLOW
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::560396668922:role/GitHubActionsWorkflowRole
+          aws-region: us-east-1
+
+      - name: Test Connection
+        run: aws sts get-caller-identity
