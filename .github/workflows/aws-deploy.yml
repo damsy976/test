@@ -18,7 +18,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::YOUR_ACCOUNT_ID:role/GitHubActionsWorkflowRole
+          role-to-assume: arn:aws:iam::560396668922:role/GitHubActionsWorkflowRole
           aws-region: us-east-1
 
       - name: Test Connection
