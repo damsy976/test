@@ -15,6 +15,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Check git oidc
+        run: |
+        echo "Repository: $GITHUB_REPOSITORY"
+        echo "Ref: $GITHUB_REF"
+        echo "Event: $GITHUB_EVENT_NAME"
+        echo "Repository ID: $GITHUB_RPOSITORY_ID"
+        echo "Owner ID": $GITHUB_REPOSITORY_OWNER_ID"
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
