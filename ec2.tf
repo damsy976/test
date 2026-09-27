@@ -61,6 +61,14 @@ resource "aws_security_group" "ssh_sg" {
     cidr_blocks = ["0.0.0.0/0"] # For production, restrict this to your specific public IP
   }
 
+  ingress {
+    description = "Http from anywhere"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # For production, restrict this to your specific public IP
+  }
+
   egress {
     description = "Allow all outbound traffic"
     from_port   = 0
