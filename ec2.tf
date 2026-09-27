@@ -95,7 +95,7 @@ data "aws_ami" "amazon_linux" {
 
 resource "aws_key_pair" "deployer_key" {
   key_name   = "deployer-key"
-  public_key = file("C:/Users/srini/OneDrive/Desktop/AWS/id_rsa.pub")
+  public_key = file("${path.module}/id_rsa.pub")
 }
 
 resource "aws_instance" "web_server" {
@@ -112,7 +112,7 @@ resource "aws_instance" "web_server" {
   }
 }
 
-output "instance_public_ip" {
-  description = "The public IP of the EC2 instance assigned via the ENI"
-  value       = aws_network_interface.server_nic.association.public_ip
-}
+# output "instance_public_ip" {
+#   description = "The public IP of the EC2 instance assigned via the ENI"
+#   value       = aws_network_interface.server_nic.association.public_ip
+# }
