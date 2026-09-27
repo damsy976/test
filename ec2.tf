@@ -100,7 +100,7 @@ resource "aws_key_pair" "deployer_key" {
 
 resource "aws_instance" "web_server" {
   ami           = data.aws_ami.amazon_linux.id
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   key_name      = aws_key_pair.deployer_key.key_name
 
   primary_network_interface {
