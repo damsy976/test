@@ -1,0 +1,40 @@
+name: Destroy Terraform Infrastructure
+
+on:
+  workflow_dispatch:
+    
+permissions:
+  id-token: write   # Required for requesting the JWT token from GitHub OIDC
+  contents: read    # Required for actions/checkout
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Clone the GitHub repository code onto the runner
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Authenticate with AWS via OIDC
+      # Replace the role ARN with your exact AWS IAM Role ARN configured for OIDC
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::560396668922:role/GitHubActionsWorkflowRole
+          aws-region: ap-south-2
+
+      # Step 3: Set up the Terraform CLI tool on the runner
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Destroy plan
+        run: terraform plan -destroy 
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
